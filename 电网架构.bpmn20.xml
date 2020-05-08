@@ -1,0 +1,123 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<definitions xmlns="http://www.omg.org/spec/BPMN/20100524/MODEL" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+             xmlns:flowable="http://flowable.org/bpmn" xmlns:bpmndi="http://www.omg.org/spec/BPMN/20100524/DI"
+             xmlns:omgdc="http://www.omg.org/spec/DD/20100524/DC" xmlns:omgdi="http://www.omg.org/spec/DD/20100524/DI"
+             typeLanguage="http://www.w3.org/2001/XMLSchema" expressionLanguage="http://www.w3.org/1999/XPath"
+             targetNamespace="http://www.flowable.org/processdef">
+   <process id="PROC-GRID_CONFIGURATION" name="电网架构配置" isExecutable="true">
+      <documentation>配置电网架构</documentation>
+      <startEvent id="startEvent1" flowable:formFieldValidation="true"></startEvent>
+      <userTask id="TASK-GRID_CONFIG" name="电网架构配置" flowable:formFieldValidation="true">
+         <extensionElements>
+            <flowable:taskListener event="create" delegateExpression="${taskAssigneeListener}"></flowable:taskListener>
+         </extensionElements>
+      </userTask>
+      <sequenceFlow id="sid-46C17A62-9C5A-43BD-848E-645C10032073" sourceRef="startEvent1"
+                    targetRef="TASK-GRID_CONFIG"></sequenceFlow>
+      <userTask id="TASK-APPROVAL" name="审核批准" flowable:formFieldValidation="true">
+         <extensionElements>
+            <flowable:taskListener event="create" delegateExpression="${taskAssigneeListener}"></flowable:taskListener>
+         </extensionElements>
+      </userTask>
+      <exclusiveGateway id="sid-E28AC76B-8881-45DD-AB0A-3FB05DE7377C"></exclusiveGateway>
+      <sequenceFlow id="sid-70EFDEDC-123B-4744-A3CC-2C44E64979FE" sourceRef="TASK-APPROVAL"
+                    targetRef="sid-E28AC76B-8881-45DD-AB0A-3FB05DE7377C"></sequenceFlow>
+      <endEvent id="sid-31062C77-5205-4B0A-857E-9454928126A0">
+         <extensionElements>
+            <flowable:executionListener event="end"
+                                        delegateExpression="${configGridSuccessListener}"></flowable:executionListener>
+         </extensionElements>
+      </endEvent>
+      <endEvent id="sid-780EB1FB-5D67-4934-BF77-B6666F0BD3E3"></endEvent>
+      <sequenceFlow id="sid-C6C77460-F16E-4847-BB3F-257CAA130DB3" name="同意"
+                    sourceRef="sid-E28AC76B-8881-45DD-AB0A-3FB05DE7377C"
+                    targetRef="sid-31062C77-5205-4B0A-857E-9454928126A0">
+         <conditionExpression xsi:type="tFormalExpression"><![CDATA[${isApprove}]]></conditionExpression>
+      </sequenceFlow>
+      <exclusiveGateway id="sid-6DB0F0B2-BC78-41D2-8F94-B5D12EA6B536"
+                        default="sid-33088C89-4FC3-4C61-B012-593447F12477"></exclusiveGateway>
+      <sequenceFlow id="sid-47223986-972A-4CC1-8EBB-2C30062209CF" sourceRef="TASK-GRID_CONFIG"
+                    targetRef="sid-6DB0F0B2-BC78-41D2-8F94-B5D12EA6B536"></sequenceFlow>
+      <sequenceFlow id="sid-33088C89-4FC3-4C61-B012-593447F12477" sourceRef="sid-6DB0F0B2-BC78-41D2-8F94-B5D12EA6B536"
+                    targetRef="TASK-APPROVAL"></sequenceFlow>
+      <sequenceFlow id="sid-81E0E9BD-D67C-44AD-AD10-8C49F9ECFD6B" name="跳过"
+                    sourceRef="sid-6DB0F0B2-BC78-41D2-8F94-B5D12EA6B536"
+                    targetRef="sid-31062C77-5205-4B0A-857E-9454928126A0">
+         <conditionExpression xsi:type="tFormalExpression">
+            <![CDATA[${taskSkipDecider.isSkipped('TASK-APPROVAL',  execution)}]]></conditionExpression>
+      </sequenceFlow>
+      <sequenceFlow id="sid-CB1A8B2B-74A0-4ADD-8897-1B571A30E0A2" name="不同意"
+                    sourceRef="sid-E28AC76B-8881-45DD-AB0A-3FB05DE7377C"
+                    targetRef="sid-780EB1FB-5D67-4934-BF77-B6666F0BD3E3">
+         <conditionExpression xsi:type="tFormalExpression"><![CDATA[${!isApprove}]]></conditionExpression>
+      </sequenceFlow>
+   </process>
+   <bpmndi:BPMNDiagram id="BPMNDiagram_PROC-GRID_CONFIGURATION">
+      <bpmndi:BPMNPlane bpmnElement="PROC-GRID_CONFIGURATION"
+                        id="BPMNPlane_PROC-GRID_CONFIGURATION">
+         <bpmndi:BPMNShape bpmnElement="startEvent1" id="BPMNShape_startEvent1">
+            <omgdc:Bounds height="30.0" width="30.0" x="90.0" y="150.0"></omgdc:Bounds>
+         </bpmndi:BPMNShape>
+         <bpmndi:BPMNShape bpmnElement="TASK-GRID_CONFIG" id="BPMNShape_TASK-GRID_CONFIG">
+            <omgdc:Bounds height="77.0" width="129.0" x="225.0" y="126.5"></omgdc:Bounds>
+         </bpmndi:BPMNShape>
+         <bpmndi:BPMNShape bpmnElement="TASK-APPROVAL" id="BPMNShape_TASK-APPROVAL">
+            <omgdc:Bounds height="80.0" width="100.0" x="515.0" y="125.0"></omgdc:Bounds>
+         </bpmndi:BPMNShape>
+         <bpmndi:BPMNShape bpmnElement="sid-E28AC76B-8881-45DD-AB0A-3FB05DE7377C"
+                           id="BPMNShape_sid-E28AC76B-8881-45DD-AB0A-3FB05DE7377C">
+            <omgdc:Bounds height="40.0" width="40.0" x="680.0" y="145.0"></omgdc:Bounds>
+         </bpmndi:BPMNShape>
+         <bpmndi:BPMNShape bpmnElement="sid-31062C77-5205-4B0A-857E-9454928126A0"
+                           id="BPMNShape_sid-31062C77-5205-4B0A-857E-9454928126A0">
+            <omgdc:Bounds height="28.0" width="28.0" x="815.0" y="225.0"></omgdc:Bounds>
+         </bpmndi:BPMNShape>
+         <bpmndi:BPMNShape bpmnElement="sid-780EB1FB-5D67-4934-BF77-B6666F0BD3E3"
+                           id="BPMNShape_sid-780EB1FB-5D67-4934-BF77-B6666F0BD3E3">
+            <omgdc:Bounds height="28.0" width="28.0" x="815.0" y="75.0"></omgdc:Bounds>
+         </bpmndi:BPMNShape>
+         <bpmndi:BPMNShape bpmnElement="sid-6DB0F0B2-BC78-41D2-8F94-B5D12EA6B536"
+                           id="BPMNShape_sid-6DB0F0B2-BC78-41D2-8F94-B5D12EA6B536">
+            <omgdc:Bounds height="40.0" width="40.0" x="405.0" y="145.0"></omgdc:Bounds>
+         </bpmndi:BPMNShape>
+         <bpmndi:BPMNEdge bpmnElement="sid-CB1A8B2B-74A0-4ADD-8897-1B571A30E0A2"
+                          id="BPMNEdge_sid-CB1A8B2B-74A0-4ADD-8897-1B571A30E0A2">
+            <omgdi:waypoint x="700.5" y="145.5"></omgdi:waypoint>
+            <omgdi:waypoint x="700.5" y="89.0"></omgdi:waypoint>
+            <omgdi:waypoint x="815.0" y="89.0"></omgdi:waypoint>
+         </bpmndi:BPMNEdge>
+         <bpmndi:BPMNEdge bpmnElement="sid-33088C89-4FC3-4C61-B012-593447F12477"
+                          id="BPMNEdge_sid-33088C89-4FC3-4C61-B012-593447F12477">
+            <omgdi:waypoint x="444.51130481667735" y="165.43165467625903"></omgdi:waypoint>
+            <omgdi:waypoint x="514.9999999999944" y="165.17903225806452"></omgdi:waypoint>
+         </bpmndi:BPMNEdge>
+         <bpmndi:BPMNEdge bpmnElement="sid-46C17A62-9C5A-43BD-848E-645C10032073"
+                          id="BPMNEdge_sid-46C17A62-9C5A-43BD-848E-645C10032073">
+            <omgdi:waypoint x="119.94999946303697" y="165.0"></omgdi:waypoint>
+            <omgdi:waypoint x="225.0" y="165.0"></omgdi:waypoint>
+         </bpmndi:BPMNEdge>
+         <bpmndi:BPMNEdge bpmnElement="sid-47223986-972A-4CC1-8EBB-2C30062209CF"
+                          id="BPMNEdge_sid-47223986-972A-4CC1-8EBB-2C30062209CF">
+            <omgdi:waypoint x="353.94999999999936" y="165.23694852941176"></omgdi:waypoint>
+            <omgdi:waypoint x="405.4261992619926" y="165.42619926199262"></omgdi:waypoint>
+         </bpmndi:BPMNEdge>
+         <bpmndi:BPMNEdge bpmnElement="sid-81E0E9BD-D67C-44AD-AD10-8C49F9ECFD6B"
+                          id="BPMNEdge_sid-81E0E9BD-D67C-44AD-AD10-8C49F9ECFD6B">
+            <omgdi:waypoint x="425.5" y="184.4371263586957"></omgdi:waypoint>
+            <omgdi:waypoint x="425.5" y="239.0"></omgdi:waypoint>
+            <omgdi:waypoint x="815.0" y="239.0"></omgdi:waypoint>
+         </bpmndi:BPMNEdge>
+         <bpmndi:BPMNEdge bpmnElement="sid-C6C77460-F16E-4847-BB3F-257CAA130DB3"
+                          id="BPMNEdge_sid-C6C77460-F16E-4847-BB3F-257CAA130DB3">
+            <omgdi:waypoint x="700.5" y="184.4371263586957"></omgdi:waypoint>
+            <omgdi:waypoint x="700.5" y="239.0"></omgdi:waypoint>
+            <omgdi:waypoint x="815.0" y="239.0"></omgdi:waypoint>
+         </bpmndi:BPMNEdge>
+         <bpmndi:BPMNEdge bpmnElement="sid-70EFDEDC-123B-4744-A3CC-2C44E64979FE"
+                          id="BPMNEdge_sid-70EFDEDC-123B-4744-A3CC-2C44E64979FE">
+            <omgdi:waypoint x="614.9499999999992" y="165.18431734317346"></omgdi:waypoint>
+            <omgdi:waypoint x="680.4259259259254" y="165.42592592592592"></omgdi:waypoint>
+         </bpmndi:BPMNEdge>
+      </bpmndi:BPMNPlane>
+   </bpmndi:BPMNDiagram>
+</definitions>
