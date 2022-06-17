@@ -21,6 +21,6 @@
     "nodemon": "^2.0.3"
   },
   "dependencies": {
-    "electron": "6"
+    "electron": "15"
   }
 }
